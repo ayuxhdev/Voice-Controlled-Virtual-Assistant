@@ -1,0 +1,2 @@
+b7def004dd5748ee866c8be5f3d7e98f
+https://newsapi.org/v2/top-headlines?country=us&apiKey=b7def004dd5748ee866c8be5f3d7e98f
