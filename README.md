@@ -1,8 +1,8 @@
-# Jarvis - Voice-Controlled Virtual Assistant
+# Sonic - Voice-Controlled Virtual Assistant
 
 ## Project Overview
 
-Jarvis is a Python-based voice-controlled virtual assistant that listens for the wake word **"Jarvis"**, understands spoken commands, and responds through text-to-speech.
+Echo is a Python-based voice-controlled virtual assistant that listens for the wake word **"Sonic"**, understands spoken commands, and responds through text-to-speech.
 
 The project currently supports basic voice commands such as opening websites, playing songs, fetching news headlines, and answering general questions using the OpenAI API.
 
@@ -16,7 +16,7 @@ The project currently supports basic voice commands such as opening websites, pl
 * Plays songs from a local music library
 * Uses `difflib` for approximate song-name matching
 * Fetches the latest news headlines using **NewsAPI**
-* Uses the **OpenAI API** for general questions
+* Uses the **Gemini API** for general questions
 
 ## Tech Stack
 
@@ -33,7 +33,7 @@ The project currently supports basic voice commands such as opening websites, pl
 
 ## How It Works
 
-1. The assistant continuously listens for the wake word **"Jarvis"**.
+1. The assistant continuously listens for the wake word **"Echo"**.
 2. Once the wake word is detected, it listens for the user's command.
 3. The spoken command is converted into text.
 4. The command is checked against the available functions:
@@ -47,7 +47,7 @@ The project currently supports basic voice commands such as opening websites, pl
 ## Project Structure
 
 ```text
-Jarvis/
+Echo/
 │
 ├── main.py
 ├── client.py
@@ -71,13 +71,13 @@ Jarvis/
 The assistant can respond to commands such as:
 
 ```text
-"Jarvis, open Google"
-"Jarvis, open YouTube"
-"Jarvis, play Despacito"
-"Jarvis, give me the latest news"
+"Sonic, open Google"
+"Sonic, open YouTube"
+"Sonic, play Despacito"
+"Sonic, give me the latest news"
 ```
 
-For other questions, the assistant can use the OpenAI API to generate a response.
+For other questions, the assistant can use the Gemini API to generate a response.
 
 ## Current Limitations
 

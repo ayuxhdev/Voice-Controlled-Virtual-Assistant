@@ -4,17 +4,18 @@ import pyttsx3                 # Text to speech
 import musicLibrary
 import difflib
 import requests
-from openai import OpenAI
+from google import genai
+from google.genai import types
 from gtts import gTTS
+from dotenv import load_dotenv
 import pygame
-
 import os
 
 recognizer = sr.Recognizer()
 
 engine = pyttsx3.init()
 
-newsapi = "YOUR_NEW_NEWSAPI_KEY_HERE"
+newsapi = "your_news_api_key"
 
 def speak_old(text):
     engine.say(text)
@@ -43,22 +44,25 @@ def speak(text):
     pygame.mixer.quit()      # Close the mixer fully
     os.remove("temp.mp3")    # Now safely delete the file
     
-def aiProcess():
-    client = OpenAI(
-        api_key="YOUR_NEW_OPENAI_API_KEY_HERE",
+def aiProcess(c):
+    client = genai.Client(
+        api_key="Your_Gemini_Api_Key",
     )
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a virtual assistant named Jarvis, skilled in general tasks like Alexa and Google Assistant."},
-            {"role": "user", "content": "What is programming?"}
-        ]
-    )
-
-    print(completion.choices[0].message.content)
-
-
     
+    response = client.models.generate_content(
+        model="gemini-3.5-flash-lite",
+        contents = c,
+        config = types.GenerateContentConfig(
+            system_instruction = ("Your name is Sonic."
+                                   "You are a helpful Voice Assistant."
+                                   "Your role is to give concise, natural, human-like answers"
+                                   "to the questions asked."
+                                   "Your responses will be spoken aloud.")
+        )
+    )
+    
+    return response.text
+
 def processCommand(c):
     if "open google" in c.lower():
         webbrowser.open("https://google.com")
@@ -95,7 +99,7 @@ def processCommand(c):
         try:
             speak("Fetching the latest news for you.")
             print("Making request to NewsAPI...")
-            r = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=YOUR_NEW_NEWSAPI_KEY_HERE")
+            r = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=your_news_api_key")
 
             if r.status_code == 200:
                 data = r.json()
@@ -120,36 +124,48 @@ def processCommand(c):
             speak("Something went wrong while fetching the news.")
                 
     else:
-        # Let openAI handle the request 
+        # Let Gemini handle the request 
         output = aiProcess(c)
         speak(output)
 
 if __name__ == "__main__":
-    speak("Initializing Jarvis...... ")
+    speak("Initializing Sonic...... ")
     while True:
         r = sr.Recognizer()
-        # Listen for the wake word "Jarvis"
-        # obtain audio from the microphone
+        # Listen for the wake word "Echo"
+        # Obtain audio from the microphone
         print("Recognizing....")
 
         try: 
             with sr.Microphone() as source:
                 print("Listening for the wake word......!")
                 r.adjust_for_ambient_noise(source, duration=1)
-                audio = r.listen(source, timeout=3, phrase_time_limit=3)
+                audio = r.listen(source, timeout=10, phrase_time_limit=5)
                 
             word = r.recognize_google(audio)
-            if word.lower() == "jarvis":
+            
+            print("Recognized",word)
+            
+            if "sonic" in word.lower():
                 speak("Ya")
+                
                 # Listen for word 
                 with sr.Microphone() as source:
-                    print("Jarvis Activated...! Listening for the command")
+                    print("Echo Activated...! Listening for the command")
                     r.adjust_for_ambient_noise(source, duration=1)
-                    audio = r.listen(source)
+                    audio = r.listen(source, timeout = 10, phrase_time_limit = 5)
                     command = r.recognize_google(audio)
-                    print("You said,",command)
+                    print("You said:",command)
                     
                     processCommand(command)
+                    
+        except sr.UnknownValueError :
+            print("Could not understand the audio")
+            speak("Sorry, I didn't understand that!")
+            
+        except sr.WaitTimeoutError :
+            print("You didn't say anything.")
+            speak("You didn't say anything")
         
         except Exception as e:
-            print("Error; {0}".format(e))
+            print("Error:",type(e).__name__,e)
