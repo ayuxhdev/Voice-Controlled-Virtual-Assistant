@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 import pygame
 import os
 
+load_dotenv()
+
 recognizer = sr.Recognizer()
 
 engine = pyttsx3.init()
@@ -63,6 +65,43 @@ def aiProcess(c):
     
     return response.text
 
+def listen_for_command():
+    
+    try :
+        # Listen for word 
+        with sr.Microphone() as source:
+            
+            print("Sonic Activated...! Listening for the command")
+            
+            r.adjust_for_ambient_noise(
+                source,
+                duration=1)
+            
+            audio = r.listen(
+                source,
+                timeout = 10,
+                phrase_time_limit = 5)
+                            
+                            
+            command = r.recognize_google(audio)
+            print("You said:",command)
+                            
+            return command
+        
+    except sr.UnknownValueError :
+                        print("Could not understand the audio")
+                        speak("Sorry, I didn't understand that!")
+                        return None
+                                    
+    except sr.WaitTimeoutError :
+                print("You didn't say anything.")
+                speak("You didn't say anything")
+                return None
+                                
+    except Exception as e:
+                print("Error:",type(e).__name__,e)
+                return None
+
 def processCommand(c):
     if "open google" in c.lower():
         webbrowser.open("https://google.com")
@@ -86,12 +125,19 @@ def processCommand(c):
         
     elif "play" in c.lower():
         command = c.lower().replace("play", "").strip()
-        matches = difflib.get_close_matches(command, musicLibrary.music.keys(), n=1, cutoff=0.5)
+        matches = difflib.get_close_matches(
+            command,
+            musicLibrary.music.keys(),
+            n=1,
+            cutoff=0.5
+            )
+        
         if matches:
             song = matches[0]
             link = musicLibrary.music[song]
             webbrowser.open(link)
             speak(f"Playing {song}")
+            
         else:
             speak("Please say the name of the song after 'play'.")
             
@@ -102,6 +148,7 @@ def processCommand(c):
             r = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=your_news_api_key")
 
             if r.status_code == 200:
+                
                 data = r.json()
                 print("Response received from NewsAPI.")
 
@@ -112,9 +159,11 @@ def processCommand(c):
                     for i, article in enumerate(articles[:5]):
                         print(f"News {i+1}: {article['title']}")
                         speak(article["title"])
+                        
                 else:
                     print("No articles found in the response.")
                     speak("Sorry, I couldn't find any news.")
+                    
             else:
                 print(f"NewsAPI returned status code {r.status_code}")
                 speak("Unable to fetch news at the moment.")
@@ -127,45 +176,64 @@ def processCommand(c):
         # Let Gemini handle the request 
         output = aiProcess(c)
         speak(output)
-
+        
 if __name__ == "__main__":
+    
     speak("Initializing Sonic...... ")
+    
     while True:
+        
         r = sr.Recognizer()
+        
         # Listen for the wake word "Echo"
         # Obtain audio from the microphone
+        
         print("Recognizing....")
 
         try: 
             with sr.Microphone() as source:
+                
                 print("Listening for the wake word......!")
-                r.adjust_for_ambient_noise(source, duration=1)
-                audio = r.listen(source, timeout=10, phrase_time_limit=5)
+                
+                r.adjust_for_ambient_noise(
+                    source,
+                    duration=1
+                    )
+                
+                audio = r.listen(
+                    source,
+                    timeout=10,
+                    phrase_time_limit=5
+                    )
                 
             word = r.recognize_google(audio)
             
             print("Recognized",word)
             
+            # Activate Sonic 
             if "sonic" in word.lower():
-                speak("Ya")
+                speak("Yes?")
                 
-                # Listen for word 
-                with sr.Microphone() as source:
-                    print("Echo Activated...! Listening for the command")
-                    r.adjust_for_ambient_noise(source, duration=1)
-                    audio = r.listen(source, timeout = 10, phrase_time_limit = 5)
-                    command = r.recognize_google(audio)
-                    print("You said:",command)
+                # Stay Active until the user says "Stop Listening"
+                while True : 
+                    command = listen_for_command()
+                    
+                    if command is None :
+                        continue
+                                        
+                    if "stop listening" in command.lower() :
+                        speak("Going to Sleep")
+                        break
                     
                     processCommand(command)
-                    
+                                  
         except sr.UnknownValueError :
-            print("Could not understand the audio")
-            speak("Sorry, I didn't understand that!")
-            
+                    print("Could not understand the audio")
+                    speak("Sorry, I didn't understand that!")
+                      
         except sr.WaitTimeoutError :
-            print("You didn't say anything.")
-            speak("You didn't say anything")
-        
+                    print("You didn't say anything.")
+                    speak("You didn't say anything")
+                          
         except Exception as e:
-            print("Error:",type(e).__name__,e)
+                    print("Error:",type(e).__name__,e)
