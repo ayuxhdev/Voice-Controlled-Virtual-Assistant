@@ -6,6 +6,8 @@ Sonic is a Python-based voice-controlled virtual assistant that listens for the 
 
 The project currently supports basic voice commands such as opening websites, playing songs, fetching news headlines, and answering general questions using the **Gemini API**.
 
+Sonic is structured into separate modules so that voice processing, AI interaction, and command handling are easier to maintain and extend.
+
 ## Features
 
 * Wake-word activation using **SpeechRecognition**
@@ -38,16 +40,18 @@ The project currently supports basic voice commands such as opening websites, pl
 
 1. Sonic continuously listens for the wake word **"Sonic"**.
 2. Once the wake word is detected, Sonic becomes active.
-3. Sonic listens for user commands continuously.
+3. Sonic listens for commands continuously without requiring the wake word again.
 4. The spoken command is converted into text using Google Speech Recognition.
-5. The command is checked against the available functions:
+5. The command is sent to the command-processing module.
+6. The command is checked against the available functions:
 
    * Open a website
    * Play a song
    * Fetch news
    * Process a general question using Gemini
-6. The response is converted into speech and played back.
-7. Sonic remains active until the user says **"stop listening"**.
+7. The response is converted into speech and played back.
+8. Sonic remains active until the user says **"stop listening"**.
+9. After that, Sonic returns to wake-word mode.
 
 ## Project Structure
 
@@ -57,6 +61,9 @@ Voice-Controlled-Virtual-Assistant/
 ├── .gitignore
 ├── .env
 ├── main.py
+├── voice.py
+├── ai.py
+├── commands.py
 ├── musicLibrary.py
 ├── Requirements.txt
 └── README.md
@@ -66,7 +73,10 @@ Voice-Controlled-Virtual-Assistant/
 
 ### File Description
 
-* `main.py` - Main program containing the voice assistant logic, command processing, Gemini integration, and speech handling.
+* `main.py` - Controls the overall application flow, wake-word detection, and interaction between the different modules.
+* `voice.py` - Handles speech recognition and text-to-speech functionality.
+* `ai.py` - Handles Gemini API communication and AI-generated responses.
+* `commands.py` - Handles command processing, including websites, music, news, and routing general questions to Gemini.
 * `musicLibrary.py` - Contains song names and their corresponding YouTube links.
 * `Requirements.txt` - Contains the Python dependencies required for the project.
 * `.env` - Stores API keys and local configuration. This file is not committed to the repository.
@@ -79,9 +89,13 @@ The assistant can respond to commands such as:
 
 ```text
 "Sonic, open Google"
+
 "Sonic, open YouTube"
+
 "Sonic, play Despacito"
+
 "Sonic, give me the latest news"
+
 "What is Python?"
 ```
 
@@ -97,19 +111,20 @@ For general questions, Sonic uses the Gemini API to generate a response.
 
 ## Current Limitations
 
-* The command system is currently based on predefined conditions.
+* The command system is still based on predefined conditions.
 * The assistant requires an internet connection for Google Speech Recognition, gTTS, NewsAPI, and Gemini features.
 * Wake-word detection relies on general speech recognition rather than a dedicated wake-word engine.
 * Speech recognition may occasionally misunderstand commands depending on microphone quality, background noise, or pronunciation.
-* The current conversational capabilities are basic and do not yet maintain conversation history.
+* Sonic currently does not maintain conversation history between questions.
+* AI responses are currently generated independently for each general question.
 
 ## Future Improvements
 
+* Add conversation memory and context awareness.
 * Improve handling of longer and more natural questions.
 * Make Gemini responses more conversational and optimized for voice.
-* Build a more flexible command/plugin system.
+* Build a more flexible command and plugin system.
 * Add more useful voice commands.
-* Add conversation memory and context awareness.
 * Improve wake-word detection.
 * Add a graphical user interface.
 * Improve overall error handling and application structure.
@@ -118,6 +133,15 @@ For general questions, Sonic uses the Gemini API to generate a response.
 
 **Version 1 - Basic Voice Assistant**
 
-The initial version of Sonic is functional and provides the foundation for future improvements.
+The current version of Sonic is functional and includes:
 
-The current version includes Gemini integration, continuous command listening, website automation, music playback, and NewsAPI integration.
+* Wake-word activation
+* Continuous command listening
+* Website automation
+* Music playback
+* NewsAPI integration
+* Gemini integration
+* Modular project structure
+* Environment-based API key management
+
+The project is actively being developed, with conversation memory and improved conversational capabilities planned as the next major improvements.
