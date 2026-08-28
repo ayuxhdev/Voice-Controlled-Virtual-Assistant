@@ -1,2 +1,0 @@
-YOUR_NEW_NEWSAPI_KEY_HERE
-https://newsapi.org/v2/top-headlines?country=us&apiKey=YOUR_NEW_NEWSAPI_KEY_HERE

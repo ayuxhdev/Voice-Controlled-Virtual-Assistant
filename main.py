@@ -13,11 +13,9 @@ import os
 
 load_dotenv()
 
-recognizer = sr.Recognizer()
-
 engine = pyttsx3.init()
 
-newsapi = "your_news_api_key"
+newsapi_key = os.getenv("NEWS_API_KEY")
 
 def speak_old(text):
     engine.say(text)
@@ -48,18 +46,23 @@ def speak(text):
     
 def aiProcess(c):
     client = genai.Client(
-        api_key="Your_Gemini_Api_Key",
+        api_key = os.getenv("GEMINI_API_KEY")
     )
     
     response = client.models.generate_content(
         model="gemini-3.5-flash-lite",
         contents = c,
         config = types.GenerateContentConfig(
-            system_instruction = ("Your name is Sonic."
-                                   "You are a helpful Voice Assistant."
-                                   "Your role is to give concise, natural, human-like answers"
-                                   "to the questions asked."
-                                   "Your responses will be spoken aloud.")
+            system_instruction = (
+                "Your name is Sonic. "
+                "You are a helpful voice assistant. "
+                "Answer questions naturally and clearly. "
+                "Keep simple questions concise, but provide more detail "
+                "when the question requires it. "
+                "Use natural spoken language rather than markdown "
+                "or unnecessary formatting. "
+                "Your responses will be spoken aloud. "
+            )
         )
     )
     
@@ -71,7 +74,7 @@ def listen_for_command():
         # Listen for word 
         with sr.Microphone() as source:
             
-            print("Sonic Activated...! Listening for the command")
+            print("Sonic Activated! Listening for the command....")
             
             r.adjust_for_ambient_noise(
                 source,
@@ -145,7 +148,8 @@ def processCommand(c):
         try:
             speak("Fetching the latest news for you.")
             print("Making request to NewsAPI...")
-            r = requests.get("https://newsapi.org/v2/top-headlines?country=us&apiKey=your_news_api_key")
+            
+            r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={newsapi_key}")
 
             if r.status_code == 200:
                 
@@ -185,7 +189,7 @@ if __name__ == "__main__":
         
         r = sr.Recognizer()
         
-        # Listen for the wake word "Echo"
+        # Listen for the wake word "Sonic"
         # Obtain audio from the microphone
         
         print("Recognizing....")

@@ -4,5 +4,4 @@ pyttsx3
 gTTS
 pygame
 requests
-openai
 python-dotenv
