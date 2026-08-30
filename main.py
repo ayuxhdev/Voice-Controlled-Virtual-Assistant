@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import voice
 import speech_recognition as sr
 import commands
+import ai
 
 load_dotenv()
         
@@ -40,7 +41,7 @@ if __name__ == "__main__" :
             
             # Activate Sonic 
             if "sonic" in word.lower():
-                voice.speak("Yes?")
+                voice.speak("Yes, Sir !")
                 
                 # Stay Active until the user says "Stop Listening"
                 while True : 
@@ -50,6 +51,7 @@ if __name__ == "__main__" :
                         continue
                                         
                     if "stop listening" in command.lower() :
+                        ai.clear_conversation()
                         voice.speak("Going to Sleep")
                         break
                     

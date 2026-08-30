@@ -5,14 +5,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+conversation_history = []
+
 def aiProcess(c) :
+    
+    global conversation_history 
+    
     client = genai.Client(
         api_key = os.getenv("GEMINI_API_KEY")
     )
     
+    conversation_history.append(
+        {
+            "role" : "user",
+            "parts" : [{"text" : c}]
+        }
+    )
+    
     response = client.models.generate_content(
         model="gemini-3.5-flash-lite",
-        contents = c,
+        contents = conversation_history,
         config = types.GenerateContentConfig(
             system_instruction = (
                 "Your name is Sonic. "
@@ -27,4 +39,15 @@ def aiProcess(c) :
         )
     )
     
+    conversation_history.append(
+        {
+            "role" : "model",
+            "parts" : [{"text" : response.text}]
+        }
+    )
+    
     return response.text
+
+def clear_conversation() :
+    global conversation_history
+    conversation_history = []
