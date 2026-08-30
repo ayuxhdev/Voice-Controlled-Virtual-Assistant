@@ -1,7 +1,5 @@
 import speech_recognition as sr
 import webbrowser
-import musicLibrary
-import difflib
 import os
 import voice
 import requests
@@ -31,22 +29,17 @@ def processCommand(c) :
         voice.speak("Opening linkedin")
         
     elif "play" in c.lower() :
-        command = c.lower().replace("play", "").strip()
-        matches = difflib.get_close_matches(
-            command,
-            musicLibrary.music.keys(),
-            n=1,
-            cutoff=0.5
-            )
+        song = c.lower().replace("play", "", 1).strip()
         
-        if matches :
-            song = matches[0]
-            link = musicLibrary.music[song]
-            webbrowser.open(link)
-            voice.speak(f"Playing {song}")
+        if song :
+            search_query = song.replace(" ", "+")
+            youtube_url = f"https://www.youtube.com/results?search_query={search_query}"
+            
+            webbrowser.open(youtube_url)
+            voice.speak(f"Searching Youtube for {song}")
             
         else :
-            voice.speak("Please say the name of the song after 'play'.")
+            voice.speak("Please say the name of the song after play")
             
     elif "news" in c.lower() :
         try :
