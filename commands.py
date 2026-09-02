@@ -4,6 +4,7 @@ import os
 import voice
 import requests
 import ai
+import web_search
 
 newsapi_key = os.getenv("NEWS_API_KEY")
 
@@ -27,6 +28,16 @@ def processCommand(c) :
     elif "open linkedin" in c.lower() :
         webbrowser.open("https://linkedin.com")
         voice.speak("Opening linkedin")
+        
+    elif "open" in c.lower() :
+        query = c.lower().replace("open", "", 1).strip()
+        
+        if query :
+            web_search.search_web(query)
+            voice.speak(f"Searching for {query}")
+            
+        else :
+            voice.speak("What would you like me to open")
         
     elif "play" in c.lower() :
         song = c.lower().replace("play", "", 1).strip()

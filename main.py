@@ -41,7 +41,7 @@ if __name__ == "__main__" :
             
             # Activate Sonic 
             if "sonic" in word.lower():
-                voice.speak("Yes, Sir !")
+                voice.speak("Yes Sir !")
                 
                 # Stay Active until the user says "Stop Listening"
                 while True : 
