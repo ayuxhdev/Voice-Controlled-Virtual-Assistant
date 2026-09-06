@@ -32,7 +32,7 @@ if __name__ == "__main__" :
                 audio = r.listen(
                     source,
                     timeout=10,
-                    phrase_time_limit=5
+                    phrase_time_limit=15
                     )
                 
             word = r.recognize_google(audio)

@@ -1,4 +1,3 @@
-import speech_recognition as sr
 import webbrowser
 import os
 import voice
@@ -8,39 +7,82 @@ import web_search
 
 newsapi_key = os.getenv("NEWS_API_KEY")
 
+def strip_keyword(c, keyword) :
+    words = c.split()
+    
+    if keyword in words :
+        words.remove(keyword)
+        
+    return " ".join(words)
+
+def detect_intent(c):
+    c = c.lower().strip()
+    words = c.split()
+    
+    if "open" in words :
+        target = c.replace("open","",1).strip()
+        return "open", target
+    
+    elif "search" in words or "find" in words :
+        
+        if "search" in words :
+            query = c.replace("search","",1).strip()
+        
+        else :
+            query = c.replace("find","",1).strip()
+            
+        if query.startswith("for ") :
+            query = query[4:].strip()
+            
+        return "search", query
+    
+    elif "play" in words :
+        target = c.replace("play","",1).strip()
+        return "play", target
+    
+    elif "news" in words :
+        return "news", ""
+    
+    return "unknown", c
+
 def processCommand(c) :
-    if "open google" in c.lower() :
-        webbrowser.open("https://google.com")
-        voice.speak("Opening google")
-        
-    elif "open youtube" in c.lower() :
-        webbrowser.open("https://youtube.com")
-        voice.speak("Opening youtube")
-        
-    elif "open instagram" in c.lower() :
-        webbrowser.open("https://instagram.com")
-        voice.speak("Opening instagram")
-        
-    elif "open facebook" in c.lower() :
-        webbrowser.open("https://facebook.com")
-        voice.speak("Opening facebook")
-        
-    elif "open linkedin" in c.lower() :
-        webbrowser.open("https://linkedin.com")
-        voice.speak("Opening linkedin")
-        
-    elif "open" in c.lower() :
-        query = c.lower().replace("open", "", 1).strip()
-        
-        if query :
-            web_search.search_web(query)
-            voice.speak(f"Searching for {query}")
+    
+    c = c.lower().strip()
+    intent, target = detect_intent(c)
+    
+    print("Intent:", intent)
+    print("Target:", target)
+    
+    if intent == "open" :
+        if "google" in target :
+            webbrowser.open("https://google.com")
+            voice.speak("Opening google")
+            
+        elif "youtube" in target :
+            webbrowser.open("https://youtube.com")
+            voice.speak("Opening youtube")
+            
+        elif "instagram" in target :
+            webbrowser.open("https://instagram.com")
+            voice.speak("Opening instagram")
+            
+        elif "facebook" in target :
+            webbrowser.open("https://facebook.com")
+            voice.speak("Opening facebook")
+            
+        elif "linkedin" in target :
+            webbrowser.open("https://linkedin.com")
+            voice.speak("Opening linkedin")
+            
+        elif target :
+            web_search.search_web(target)
+            voice.speak(f"Searching for {target}")
             
         else :
-            voice.speak("What would you like me to open")
+            voice.speak("What would you like me to open ?")
         
-    elif "play" in c.lower() :
-        song = c.lower().replace("play", "", 1).strip()
+    elif intent == "play" :
+        song = target
         
         if song :
             search_query = song.replace(" ", "+")
@@ -52,7 +94,15 @@ def processCommand(c) :
         else :
             voice.speak("Please say the name of the song after play")
             
-    elif "news" in c.lower() :
+    elif intent == "search" :
+        if target :
+            web_search.search_web(target)
+            voice.speak(f"Searching for {target}")
+        
+        else :
+            voice.speak("What do you like me to search for ?")
+            
+    elif intent == "news" :
         try :
             voice.speak("Fetching the latest news for you.")
             print("Making request to NewsAPI...")
