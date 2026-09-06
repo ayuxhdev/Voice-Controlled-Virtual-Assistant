@@ -20,16 +20,16 @@ def detect_intent(c):
     words = c.split()
     
     if "open" in words :
-        target = c.replace("open","",1).strip()
+        target = strip_keyword(c, "open")
         return "open", target
     
     elif "search" in words or "find" in words :
         
         if "search" in words :
-            query = c.replace("search","",1).strip()
+            query = strip_keyword(c, "search")
         
         else :
-            query = c.replace("find","",1).strip()
+            query = strip_keyword(c, "find")
             
         if query.startswith("for ") :
             query = query[4:].strip()
@@ -37,7 +37,7 @@ def detect_intent(c):
         return "search", query
     
     elif "play" in words :
-        target = c.replace("play","",1).strip()
+        target = strip_keyword(c, "play")
         return "play", target
     
     elif "news" in words :
@@ -100,7 +100,7 @@ def processCommand(c) :
             voice.speak(f"Searching for {target}")
         
         else :
-            voice.speak("What do you like me to search for ?")
+            voice.speak("What would you like me to search for ?")
             
     elif intent == "news" :
         try :
