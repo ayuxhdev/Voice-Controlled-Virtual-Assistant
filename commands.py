@@ -85,14 +85,22 @@ def processCommand(c) :
         song = target
         
         if song :
-            search_query = song.replace(" ", "+")
-            youtube_url = f"https://www.youtube.com/results?search_query={search_query}"
+            audio_url = web_search.get_yt_audio(song)
             
-            webbrowser.open(youtube_url)
-            voice.speak(f"Searching Youtube for {song}")
-            
+            if audio_url :
+                web_search.play_audio(audio_url)
+                voice.speak(f"Playing {song}")
+            else :
+                voice.speak(f"I couldn't find {song}")
+                
         else :
             voice.speak("Please say the name of the song after play")
+        
+        """if song :
+            youtube_url = web_search.get_yt_result(song)
+            
+            if youtube_url :
+                webbrowser.open(youtube_url)"""
             
     elif intent == "search" :
         if target :
